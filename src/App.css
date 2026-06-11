@@ -1,0 +1,98 @@
+* {
+  margin: 0;
+}
+
+.titre {
+  padding-top: 30px;
+  padding-left: 35px;
+}
+
+/* .statutReveil{
+
+} */
+
+.dureeReveil {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.nomReveil {
+  font-size: 20px;
+}
+
+.statutReveil {
+  font-size: 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.cardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 30px;
+}
+
+/* .cardAddReveil {
+
+} */
+
+.cardAddReveil,
+.cardReveil {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  width: 220px;
+  min-height: 140px;
+  padding: 18px;
+  border: 1px solid #d9d9d9;
+  border-radius: 14px;
+  box-sizing: border-box;
+  background-color: white;
+}
+
+.cardReveil {
+  gap: 15px;
+}
+
+.switchBackground {
+  margin-left: 5px;
+  margin-bottom: 1px;
+  vertical-align: middle;
+  position: relative;
+  display: inline-block;
+  height: 15px;
+  width: 45px;
+  border: 1px solid rgb(0, 0, 0);
+  border-radius: 14px;
+}
+
+.switchBackgroundOff {
+  background-color: red;
+}
+
+.switchBackgroundOn {
+  background-color: green;
+}
+
+.switchRond {
+  position: absolute;
+  width: 23px;
+  height: 15px;
+  background-color: lightblue;
+  border-radius: 15px;
+  display: inline-block;
+}
+
+.switchRondOn {
+  left: 22px;
+
+}
+
+.switchRondOff {
+  left: 0px;
+
+}
