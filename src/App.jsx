@@ -46,7 +46,9 @@ function App() {
   function selectionnerReveil(reveil) {
     console.log("fonctionne")
     setReveilSelectionne(reveil)
-
+    setNomModified(reveil.nom)
+    setDureeModified(reveil.dureeMinutes)
+    
   }
 
   return (
