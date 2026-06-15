@@ -44,7 +44,6 @@ function App() {
   }
 
   function selectionnerReveil(reveil) {
-    console.log("fonctionne")
     setReveilSelectionne(reveil)
     setNomModified(reveil.nom)
     setDureeModified(reveil.dureeMinutes)
@@ -82,7 +81,8 @@ function App() {
         <div className="popupReveil">
           <h1>Modifier le réveil</h1>
           <p>Nom : {reveilSelectionne.nom}</p>
-          <p>Durée : {reveilSelectionne.dureeMinutes}</p>
+          <input type="text" value={nomModified} onChange={(event) => setNomModified(event.target.value)}/>
+          <input>Durée : {reveilSelectionne.dureeMinutes}/>
           <button onClick={() => setReveilSelectionne(null)}>Fermer</button>
         </div>
       </div>)}
