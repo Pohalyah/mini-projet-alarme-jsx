@@ -28,6 +28,8 @@ function App() {
   ]);
 
   const [reveilSelectionne, setReveilSelectionne] = useState(null);
+  const [nomModified, setNomModified] = useState("");
+  const [dureeModified, setDureeModified] = useState("");
 
   function boutonReveil(idReveil) {
     setReveils(
@@ -74,6 +76,14 @@ function App() {
             </li>
           ))}
       </div >
+      {reveilSelectionne && (<div className="popupOverlay">
+        <div className="popupReveil">
+          <h1>Modifier le réveil</h1>
+          <p>Nom : {reveilSelectionne.nom}</p>
+          <p>Durée : {reveilSelectionne.dureeMinutes}</p>
+          <button onClick={() => setReveilSelectionne(null)}>Fermer</button>
+        </div>
+      </div>)}
     </>
 
   )
