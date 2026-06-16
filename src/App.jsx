@@ -35,7 +35,7 @@ function App() {
     setReveils(
       reveils.map((ceReveil) => {
         if (ceReveil.id === idReveil) {
-          return { ...ceReveil, actif: !ceReveil.actif };
+          return { ...ceReveil, actif: ceReveil.actif };
         }
 
         return ceReveil;
@@ -50,6 +50,17 @@ function App() {
     
   }
 
+  function modifierReveil() {
+      setReveils(
+        reveils.map((ceReveil) => {
+      if(ceReveil.id===reveilSelectionne.id){
+        return { ...ceReveil, ceReveil.nomModified, ceReveil.dureeModified };
+      }
+      return ceReveil
+        })
+      )
+    } 
+  
   return (
     <>
       <h1 className="titre">
@@ -80,10 +91,15 @@ function App() {
       {reveilSelectionne && (<div className="popupOverlay">
         <div className="popupReveil">
           <h1>Modifier le réveil</h1>
-          <p>Nom : {reveilSelectionne.nom}</p>
+          
+          <p>Nom : </p>
           <input type="text" value={nomModified} onChange={(event) => setNomModified(event.target.value)}/>
-          <input>Durée : {reveilSelectionne.dureeMinutes}/>
+          
+          <p>Durée : </p>
+          <input type="text" value={dureeModified} onChange={(event) => setDureeModified(event.target.value)}/>
           <button onClick={() => setReveilSelectionne(null)}>Fermer</button>
+          
+          <button>Enregistrer</button>
         </div>
       </div>)}
     </>
