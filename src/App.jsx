@@ -30,12 +30,13 @@ function App() {
   const [reveilSelectionne, setReveilSelectionne] = useState(null);
   const [nomModified, setNomModified] = useState("");
   const [dureeModified, setDureeModified] = useState("");
+  const [modePopup, setModePopup] = useState(null);
 
   function boutonReveil(idReveil) {
     setReveils(
       reveils.map((ceReveil) => {
         if (ceReveil.id === idReveil) {
-          return { ...ceReveil, actif: ceReveil.actif };
+          return { ...ceReveil, actif: !ceReveil.actif };
         }
 
         return ceReveil;
@@ -44,22 +45,27 @@ function App() {
   }
 
   function selectionnerReveil(reveil) {
+    setModePopup("modification")
     setReveilSelectionne(reveil)
     setNomModified(reveil.nom)
     setDureeModified(reveil.dureeMinutes)
-    
   }
 
   function modifierReveil() {
+    if (isNaN(Number(dureeModified)) || Number(dureeModified) <= 0) {
+      alert("La durée d'un réveil doit être de minimum 1 minute!")
+    } else {
       setReveils(
         reveils.map((ceReveil) => {
       if(ceReveil.id===reveilSelectionne.id){
-        return { ...ceReveil, ceReveil.nomModified, ceReveil.dureeModified };
+        return { ...ceReveil, nom: nomModified, dureeMinutes: Number(dureeModified) };
       }
       return ceReveil
         })
-      )
-    } 
+      );
+    setReveilSelectionne(null)
+    }
+  }
   
   return (
     <>
@@ -96,10 +102,10 @@ function App() {
           <input type="text" value={nomModified} onChange={(event) => setNomModified(event.target.value)}/>
           
           <p>Durée : </p>
-          <input type="text" value={dureeModified} onChange={(event) => setDureeModified(event.target.value)}/>
+          <input type="number" value={dureeModified} onChange={(event) => setDureeModified(event.target.value)}/>
           <button onClick={() => setReveilSelectionne(null)}>Fermer</button>
           
-          <button>Enregistrer</button>
+          <button onClick={modifierReveil}>Enregistrer</button>
         </div>
       </div>)}
     </>
