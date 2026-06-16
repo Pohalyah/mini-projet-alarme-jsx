@@ -66,6 +66,13 @@ function App() {
     setReveilSelectionne(null)
     }
   }
+
+  function creerReveil() {
+    setModePopup("creation")
+    setReveilSelectionne(null)
+    setNomModified("")
+    setDureeModified("")
+  }
   
   return (
     <>
@@ -74,7 +81,7 @@ function App() {
       </h1>
       <div className="cardContainer">
         <div className="cardAddReveil">
-          <button>
+          <button onClick={creerReveil}>
             Ajouter un réveil
           </button>
         </div >
@@ -94,9 +101,9 @@ function App() {
             </li>
           ))}
       </div >
-      {reveilSelectionne && (<div className="popupOverlay">
+      {modePopup && (<div className="popupOverlay">
         <div className="popupReveil">
-          <h1>Modifier le réveil</h1>
+          <h1>{modePopup === "creation" ? "Créer un réveil" : "Modifier un réveil"}</h1>
           
           <p>Nom : </p>
           <input type="text" value={nomModified} onChange={(event) => setNomModified(event.target.value)}/>
