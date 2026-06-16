@@ -73,6 +73,30 @@ function App() {
     setNomModified("")
     setDureeModified("")
   }
+
+  function validerPopup() {
+    if(modePopup==="modification"){
+      modifierReveil();
+      resetPopup()
+    } else if (modePopup==="creation") {
+       const newReveil = {
+      id: Date.now(),
+      nom: nomModified,
+      dureeMinutes: Number(dureeModified),
+      actif: false,
+      heureDeFin: null
+    }
+      setReveils([...reveils, newReveil])
+      resetPopup()
+    }
+  }
+
+  function resetPopup() {
+      setModePopup(null);
+      setReveilSelectionne(null);
+      setNomModified("");
+      setDureeModified("");
+  }
   
   return (
     <>
