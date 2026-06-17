@@ -1,5 +1,5 @@
 import './App.css'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
 
@@ -31,7 +31,16 @@ function App() {
   const [nomModified, setNomModified] = useState("");
   const [dureeModified, setDureeModified] = useState("");
   const [modePopup, setModePopup] = useState(null);
+  const [tick, setTick] = useState(0);
 
+  useEffect(() => {
+  const interval = setInterval(() => {
+    setTick(prev => prev + 1);
+  }, 1000);
+
+  return () => clearInterval(interval);
+  }, []);
+  
   function boutonReveil(idReveil) {
     setReveils(
       reveils.map((ceReveil) => {
@@ -103,49 +112,116 @@ function App() {
   }
   
   return (
-    <>
-      <h1 className="titre">
-        nAPPing
-      </h1>
-      <div className="cardContainer">
-        <div className="cardAddReveil">
-          <button onClick={creerReveil}>
-            Ajouter un réveil
-          </button>
-        </div >
-        {
-          reveils.map((ceReveil) => (
-            <li key={ceReveil.id} className="cardReveil" onClick={() => selectionnerReveil(ceReveil)}>
-              <p className="nomReveil">{ceReveil.nom}</p>
-              <p className="dureeReveil">{Math.floor(ceReveil.dureeMinutes / 60).toString().padStart(2, "0")} : {(ceReveil.dureeMinutes % 60).toString().padStart(2, "0")}</p>
-              <button className="statutReveil" onClick={(event) => { event.stopPropagation(), boutonReveil(ceReveil.id) }}>
-                <span className={"switchBackground" + " " + (ceReveil.actif ? "switchBackgroundOn" : "switchBackgroundOff")}>
-                  <span className={"switchRond" + " " + (ceReveil.actif ? "switchRondOn" : "switchRondOff")}>
+  <>
+    <h1 className="titre">
+      nAPPing
+    </h1>
 
-                  </span>
-                </span>
-              </button>
+    <div className="cardContainer">
 
-            </li>
-          ))}
-      </div >
-      {modePopup && (<div className="popupOverlay">
+      <div className="cardAddReveil">
+        <button onClick={creerReveil}>
+          Ajouter un réveil
+        </button>
+      </div>
+
+      {
+        reveils.map((ceReveil) => (
+          <li
+            key={ceReveil.id}
+            className="cardReveil"
+            onClick={() => selectionnerReveil(ceReveil)}
+          >
+            <p className="nomReveil">{ceReveil.nom}</p>
+
+            <p className="dureeReveil">
+              {Math.floor(ceReveil.dureeMinutes / 60).toString().padStart(2, "0")} :
+              {(ceReveil.dureeMinutes % 60).toString().padStart(2, "0")}
+            </p>
+
+            {
+              ceReveil.actif && ceReveil.heureDeFin && (
+                (() => {
+                  const remaining = ceReveil.heureDeFin - Date.now();
+
+                  if (remaining <= 0) return <p>00:00</p>;
+
+                  const totalMinutes = Math.floor(remaining / 60000);
+                  const hours = Math.floor(totalMinutes / 60);
+                  const minutes = totalMinutes % 60;
+
+                  return (
+                    <p>
+                      {String(hours).padStart(2, "0")}:
+                      {String(minutes).padStart(2, "0")}
+                    </p>
+                  );
+                })()
+              )
+            }
+
+            <button
+              className="statutReveil"
+              onClick={(event) => {
+                event.stopPropagation();
+                boutonReveil(ceReveil.id);
+              }}
+            >
+              <span className={
+                "switchBackground " +
+                (ceReveil.actif ? "switchBackgroundOn" : "switchBackgroundOff")
+              }>
+                <span className={
+                  "switchRond " +
+                  (ceReveil.actif ? "switchRondOn" : "switchRondOff")
+                } />
+              </span>
+            </button>
+
+          </li>
+        ))
+      }
+
+    </div>
+
+    {modePopup && (
+      <div className="popupOverlay">
         <div className="popupReveil">
-          <h1>{modePopup === "creation" ? "Créer un réveil" : "Modifier un réveil"}</h1>
-          
-          <p>Nom : </p>
-          <input type="text" value={nomModified} onChange={(event) => setNomModified(event.target.value)}/>
-          
-          <p>Durée : </p>
-          <input type="number" value={dureeModified} onChange={(event) => setDureeModified(event.target.value)}/>
-          <button onClick={() => setReveilSelectionne(null)}>Fermer</button>
-          
-          <button onClick={modifierReveil}>Enregistrer</button>
-        </div>
-      </div>)}
-    </>
 
-  )
+          <h1>
+            {modePopup === "creation"
+              ? "Créer un réveil"
+              : "Modifier un réveil"}
+          </h1>
+
+          <p>Nom :</p>
+          <input
+            type="text"
+            value={nomModified}
+            onChange={(event) => setNomModified(event.target.value)}
+          />
+
+          <p>Durée :</p>
+          <input
+            type="number"
+            value={dureeModified}
+            onChange={(event) => setDureeModified(event.target.value)}
+          />
+
+          <button onClick={() => setReveilSelectionne(null)}>
+            Fermer
+          </button>
+
+          <button onClick={modifierReveil}>
+            Enregistrer
+          </button>
+
+        </div>
+      </div>
+    )}
+
+  </>
+)
 }
 
 export default App
