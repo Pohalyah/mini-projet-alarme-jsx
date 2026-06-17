@@ -1,5 +1,6 @@
 import './App.css'
 import { useState, useEffect } from "react";
+import sonnerie from "./sonneriereveil.mp3";
 
 function App() {
 
@@ -33,6 +34,9 @@ function App() {
   const [modePopup, setModePopup] = useState(null);
   const [tick, setTick] = useState(0);
 
+  const audioRef = useRef(new Audio(sonnerie));
+audioRef.current.loop = true;
+  
   useEffect(() => {
   const interval = setInterval(() => {
     setTick(prev => prev + 1);
@@ -42,16 +46,33 @@ function App() {
   }, []);
   
   function boutonReveil(idReveil) {
-    setReveils(
-      reveils.map((ceReveil) => {
-        if (ceReveil.id === idReveil) {
-          return { ...ceReveil, actif: !ceReveil.actif };
-        }
+  setReveils(
+    reveils.map((ceReveil) => {
+      if (ceReveil.id === idReveil) {
 
-        return ceReveil;
-      })
-    );
-  }
+        if (!ceReveil.actif) {
+          return {
+            ...ceReveil,
+            actif: true,
+            heureDeFin: Date.now() + ceReveil.dureeMinutes * 60 * 1000
+          };
+        } else {
+
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+
+          return {
+            ...ceReveil,
+            actif: false,
+            heureDeFin: null
+          };
+        }
+      }
+
+      return ceReveil;
+    })
+  );
+}
 
   function selectionnerReveil(reveil) {
     setModePopup("modification")
@@ -144,7 +165,10 @@ function App() {
                 (() => {
                   const remaining = ceReveil.heureDeFin - Date.now();
 
-                  if (remaining <= 0) return <p>00:00</p>;
+                  if (remaining <= 0) {
+                    audioRef.current.play();
+                    return <p>00:00</p>;
+                  }
 
                   const totalMinutes = Math.floor(remaining / 60000);
                   const hours = Math.floor(totalMinutes / 60);
