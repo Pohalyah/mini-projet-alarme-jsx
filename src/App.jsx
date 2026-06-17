@@ -97,6 +97,10 @@ function App() {
       setNomModified("");
       setDureeModified("");
   }
+
+  function toggleTimer(id){
+    
+  }
   
   return (
     <>
