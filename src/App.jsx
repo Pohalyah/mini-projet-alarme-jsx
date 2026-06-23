@@ -35,7 +35,12 @@ function App() {
   const [tick, setTick] = useState(0);
 
   const audioRef = useRef(new Audio(sonnerie));
-  audioRef.current.loop = true;
+
+  useEffect(() => {
+    audioRef.current.loop = true;
+  }, []);
+
+  const sonEnCours = useRef(false)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -60,6 +65,7 @@ function App() {
 
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
+            sonEnCours.current = false;
 
             return {
               ...ceReveil,
@@ -160,29 +166,27 @@ function App() {
                 {(ceReveil.dureeMinutes % 60).toString().padStart(2, "0")}
               </p>
 
-              {
-                ceReveil.actif && ceReveil.heureDeFin && (
-                  (() => {
+              <p>
+                {ceReveil.actif && ceReveil.heureDeFin
+                  ? (() => {
                     const remaining = ceReveil.heureDeFin - Date.now();
 
                     if (remaining <= 0) {
-                      audioRef.current.play();
-                      return <p>00:00</p>;
+                      if (!sonEnCours.current) {
+                        audioRef.current.play();
+                        sonEnCours.current = true;
+                      }
+                      return "00:00";
                     }
 
                     const totalMinutes = Math.floor(remaining / 60000);
                     const hours = Math.floor(totalMinutes / 60);
                     const minutes = totalMinutes % 60;
 
-                    return (
-                      <p>
-                        {String(hours).padStart(2, "0")}:
-                        {String(minutes).padStart(2, "0")}
-                      </p>
-                    );
+                    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
                   })()
-                )
-              }
+                  : ""}
+              </p>
 
               <button
                 className="statutReveil"
