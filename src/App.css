@@ -55,7 +55,7 @@
 }
 
 .cardReveil {
-  gap: 15px;
+  gap: 10px;
 }
 
 .switchBackground {
@@ -117,4 +117,11 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+
+.timerReveil {
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

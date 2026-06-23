@@ -166,7 +166,7 @@ function App() {
                 {(ceReveil.dureeMinutes % 60).toString().padStart(2, "0")}
               </p>
 
-              <p>
+              <p className="timerReveil">
                 {ceReveil.actif && ceReveil.heureDeFin
                   ? (() => {
                     const remaining = ceReveil.heureDeFin - Date.now();
