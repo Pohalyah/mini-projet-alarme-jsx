@@ -180,7 +180,7 @@ function App() {
                     }
                     const totalSeconds = Math.floor(remaining / 1000)
                     const hours = Math.floor(totalSeconds / 3600);
-                    const minutes = (totalSeconds % 3600) / 60;
+                    const minutes = Math.floor((totalSeconds % 3600) / 60);
                     const secondes = totalSeconds % 60
 
                     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secondes).padStart(2, "0")}`;
