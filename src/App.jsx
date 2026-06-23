@@ -1,5 +1,5 @@
 import './App.css'
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import sonnerie from "./sonneriereveil.mp3";
 
 function App() {
@@ -35,44 +35,44 @@ function App() {
   const [tick, setTick] = useState(0);
 
   const audioRef = useRef(new Audio(sonnerie));
-audioRef.current.loop = true;
-  
+  audioRef.current.loop = true;
+
   useEffect(() => {
-  const interval = setInterval(() => {
-    setTick(prev => prev + 1);
-  }, 1000);
+    const interval = setInterval(() => {
+      setTick(prev => prev + 1);
+    }, 1000);
 
-  return () => clearInterval(interval);
+    return () => clearInterval(interval);
   }, []);
-  
+
   function boutonReveil(idReveil) {
-  setReveils(
-    reveils.map((ceReveil) => {
-      if (ceReveil.id === idReveil) {
+    setReveils(
+      reveils.map((ceReveil) => {
+        if (ceReveil.id === idReveil) {
 
-        if (!ceReveil.actif) {
-          return {
-            ...ceReveil,
-            actif: true,
-            heureDeFin: Date.now() + ceReveil.dureeMinutes * 60 * 1000
-          };
-        } else {
+          if (!ceReveil.actif) {
+            return {
+              ...ceReveil,
+              actif: true,
+              heureDeFin: Date.now() + ceReveil.dureeMinutes * 60 * 1000
+            };
+          } else {
 
-          audioRef.current.pause();
-          audioRef.current.currentTime = 0;
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
 
-          return {
-            ...ceReveil,
-            actif: false,
-            heureDeFin: null
-          };
+            return {
+              ...ceReveil,
+              actif: false,
+              heureDeFin: null
+            };
+          }
         }
-      }
 
-      return ceReveil;
-    })
-  );
-}
+        return ceReveil;
+      })
+    );
+  }
 
   function selectionnerReveil(reveil) {
     setModePopup("modification")
@@ -87,13 +87,13 @@ audioRef.current.loop = true;
     } else {
       setReveils(
         reveils.map((ceReveil) => {
-      if(ceReveil.id===reveilSelectionne.id){
-        return { ...ceReveil, nom: nomModified, dureeMinutes: Number(dureeModified) };
-      }
-      return ceReveil
+          if (ceReveil.id === reveilSelectionne.id) {
+            return { ...ceReveil, nom: nomModified, dureeMinutes: Number(dureeModified) };
+          }
+          return ceReveil
         })
       );
-    setReveilSelectionne(null)
+      setReveilSelectionne(null)
     }
   }
 
@@ -105,147 +105,147 @@ audioRef.current.loop = true;
   }
 
   function validerPopup() {
-    if(modePopup==="modification"){
+    if (modePopup === "modification") {
       modifierReveil();
       resetPopup()
-    } else if (modePopup==="creation") {
-       const newReveil = {
-      id: Date.now(),
-      nom: nomModified,
-      dureeMinutes: Number(dureeModified),
-      actif: false,
-      heureDeFin: null
-    }
+    } else if (modePopup === "creation") {
+      const newReveil = {
+        id: Date.now(),
+        nom: nomModified,
+        dureeMinutes: Number(dureeModified),
+        actif: false,
+        heureDeFin: null
+      }
       setReveils([...reveils, newReveil])
       resetPopup()
     }
   }
 
   function resetPopup() {
-      setModePopup(null);
-      setReveilSelectionne(null);
-      setNomModified("");
-      setDureeModified("");
+    setModePopup(null);
+    setReveilSelectionne(null);
+    setNomModified("");
+    setDureeModified("");
   }
 
-  function toggleTimer(id){
-    
+  function toggleTimer(id) {
+
   }
-  
+
   return (
-  <>
-    <h1 className="titre">
-      nAPPing
-    </h1>
+    <>
+      <h1 className="titre">
+        nAPPing
+      </h1>
 
-    <div className="cardContainer">
+      <div className="cardContainer">
 
-      <div className="cardAddReveil">
-        <button onClick={creerReveil}>
-          Ajouter un réveil
-        </button>
+        <div className="cardAddReveil">
+          <button onClick={creerReveil}>
+            Ajouter un réveil
+          </button>
+        </div>
+
+        {
+          reveils.map((ceReveil) => (
+            <li
+              key={ceReveil.id}
+              className="cardReveil"
+              onClick={() => selectionnerReveil(ceReveil)}
+            >
+              <p className="nomReveil">{ceReveil.nom}</p>
+
+              <p className="dureeReveil">
+                {Math.floor(ceReveil.dureeMinutes / 60).toString().padStart(2, "0")} :
+                {(ceReveil.dureeMinutes % 60).toString().padStart(2, "0")}
+              </p>
+
+              {
+                ceReveil.actif && ceReveil.heureDeFin && (
+                  (() => {
+                    const remaining = ceReveil.heureDeFin - Date.now();
+
+                    if (remaining <= 0) {
+                      audioRef.current.play();
+                      return <p>00:00</p>;
+                    }
+
+                    const totalMinutes = Math.floor(remaining / 60000);
+                    const hours = Math.floor(totalMinutes / 60);
+                    const minutes = totalMinutes % 60;
+
+                    return (
+                      <p>
+                        {String(hours).padStart(2, "0")}:
+                        {String(minutes).padStart(2, "0")}
+                      </p>
+                    );
+                  })()
+                )
+              }
+
+              <button
+                className="statutReveil"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  boutonReveil(ceReveil.id);
+                }}
+              >
+                <span className={
+                  "switchBackground " +
+                  (ceReveil.actif ? "switchBackgroundOn" : "switchBackgroundOff")
+                }>
+                  <span className={
+                    "switchRond " +
+                    (ceReveil.actif ? "switchRondOn" : "switchRondOff")
+                  } />
+                </span>
+              </button>
+
+            </li>
+          ))
+        }
+
       </div>
 
-      {
-        reveils.map((ceReveil) => (
-          <li
-            key={ceReveil.id}
-            className="cardReveil"
-            onClick={() => selectionnerReveil(ceReveil)}
-          >
-            <p className="nomReveil">{ceReveil.nom}</p>
+      {modePopup && (
+        <div className="popupOverlay">
+          <div className="popupReveil">
 
-            <p className="dureeReveil">
-              {Math.floor(ceReveil.dureeMinutes / 60).toString().padStart(2, "0")} :
-              {(ceReveil.dureeMinutes % 60).toString().padStart(2, "0")}
-            </p>
+            <h1>
+              {modePopup === "creation"
+                ? "Créer un réveil"
+                : "Modifier un réveil"}
+            </h1>
 
-            {
-              ceReveil.actif && ceReveil.heureDeFin && (
-                (() => {
-                  const remaining = ceReveil.heureDeFin - Date.now();
+            <p>Nom :</p>
+            <input
+              type="text"
+              value={nomModified}
+              onChange={(event) => setNomModified(event.target.value)}
+            />
 
-                  if (remaining <= 0) {
-                    audioRef.current.play();
-                    return <p>00:00</p>;
-                  }
+            <p>Durée :</p>
+            <input
+              type="number"
+              value={dureeModified}
+              onChange={(event) => setDureeModified(event.target.value)}
+            />
 
-                  const totalMinutes = Math.floor(remaining / 60000);
-                  const hours = Math.floor(totalMinutes / 60);
-                  const minutes = totalMinutes % 60;
-
-                  return (
-                    <p>
-                      {String(hours).padStart(2, "0")}:
-                      {String(minutes).padStart(2, "0")}
-                    </p>
-                  );
-                })()
-              )
-            }
-
-            <button
-              className="statutReveil"
-              onClick={(event) => {
-                event.stopPropagation();
-                boutonReveil(ceReveil.id);
-              }}
-            >
-              <span className={
-                "switchBackground " +
-                (ceReveil.actif ? "switchBackgroundOn" : "switchBackgroundOff")
-              }>
-                <span className={
-                  "switchRond " +
-                  (ceReveil.actif ? "switchRondOn" : "switchRondOff")
-                } />
-              </span>
+            <button onClick={() => setReveilSelectionne(null)}>
+              Fermer
             </button>
 
-          </li>
-        ))
-      }
+            <button onClick={modifierReveil}>
+              Enregistrer
+            </button>
 
-    </div>
-
-    {modePopup && (
-      <div className="popupOverlay">
-        <div className="popupReveil">
-
-          <h1>
-            {modePopup === "creation"
-              ? "Créer un réveil"
-              : "Modifier un réveil"}
-          </h1>
-
-          <p>Nom :</p>
-          <input
-            type="text"
-            value={nomModified}
-            onChange={(event) => setNomModified(event.target.value)}
-          />
-
-          <p>Durée :</p>
-          <input
-            type="number"
-            value={dureeModified}
-            onChange={(event) => setDureeModified(event.target.value)}
-          />
-
-          <button onClick={() => setReveilSelectionne(null)}>
-            Fermer
-          </button>
-
-          <button onClick={modifierReveil}>
-            Enregistrer
-          </button>
-
+          </div>
         </div>
-      </div>
-    )}
+      )}
 
-  </>
-)
+    </>
+  )
 }
 
 export default App
