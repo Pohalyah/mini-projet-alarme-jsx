@@ -236,11 +236,11 @@ function App() {
               onChange={(event) => setDureeModified(event.target.value)}
             />
 
-            <button onClick={() => setReveilSelectionne(null)}>
+            <button onClick={() => resetPopup()}>
               Fermer
             </button>
 
-            <button onClick={modifierReveil}>
+            <button onClick={validerPopup}>
               Enregistrer
             </button>
 
